@@ -9,7 +9,7 @@ function getToken() {
   try { return JSON.parse(sessionStorage.getItem(SESSION_KEY))?.token ?? null } catch { return null }
 }
 
-const BASE = import.meta.env.VITE_API_URL || 'https://scholarly-library-pble.onrender.com/api'
+const BASE = import.meta.env.VITE_API_URL || 'https://scholarly-library-zgjw.onrender.com/api'
 
 const FILE_ICONS = {
   pdf: 'picture_as_pdf', doc: 'description', docx: 'description',

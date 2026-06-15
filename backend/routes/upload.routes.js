@@ -12,7 +12,7 @@ router.post(
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded or file type not allowed' })
     }
-    const base = process.env.SERVER_URL || 'https://scholarly-library-pble.onrender.com'
+    const base = process.env.SERVER_URL || 'https://scholarly-library-zgjw.onrender.com'
     const fileUrl = `${base}/uploads/${req.file.filename}`
     res.json({
       fileUrl,

@@ -57,9 +57,6 @@ export default function RouteNav() {
       aria-label="Main navigation"
       className="fixed top-0 z-[100] px-3 py-2 w-full"
       style={{
-        position: 'sticky',
-        top: 0,
-        width: '100%',
         background:   'linear-gradient(135deg, #06060e 0%, #0e0c18 45%, #100e1c 100%)',
         borderBottom: '1px solid rgba(233,193,118,0.10)',
         boxShadow:    '0 2px 20px rgba(0,0,0,0.50)',
@@ -80,7 +77,9 @@ export default function RouteNav() {
               )
             }
           >
-            <span className="material-symbols-outlined text-[20px]" style={{ color: '#e9c176' }}>local_library</span>
+            <span style={{ color: '#e9c176',  }}>
+              <img  style={{height:'30px'}} src="/favicon.svg" alt="logo" />
+              </span>
             <span className="font-bold text-white text-[15px] tracking-tight">Scholarly Library</span>
           </button>
 

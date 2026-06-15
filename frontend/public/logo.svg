@@ -1,0 +1,16 @@
+<svg viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg" width="680" height="220">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Caveat:wght@400&amp;display=swap');
+    </style>
+  </defs>
+  <rect width="680" height="220" fill="rgb(13,11,23)"/>
+  <circle cx="108" cy="110" r="95" fill="rgb(13,11,23)" stroke="#2e2b50" stroke-width="1.2"/>
+  <text font-family="'Playfair Display',Georgia,serif" font-size="110" font-weight="700" fill="#888888" x="108" y="158" text-anchor="middle">J</text>
+  <text font-family="'Playfair Display',Georgia,serif" font-size="16" font-weight="700" fill="#f0ede8" letter-spacing="1" x="108" y="82" text-anchor="middle">JPrakash</text>
+  <path d="M68 89 Q108 97 148 89" fill="none" stroke="#f0ede8" stroke-width="0.7" opacity="0.5"/>
+  <text font-family="'Playfair Display',Georgia,serif" font-size="11" fill="#f0ede8" letter-spacing="5" x="108" y="178" text-anchor="middle">LIBRARY</text>
+  <text font-family="'Caveat',cursive" font-size="82" fill="#f0ede8" x="250" y="112">Scholarly</text>
+  <line x1="250" y1="126" x2="665" y2="126" stroke="#3a3760" stroke-width="1"/>
+  <text font-family="'Caveat',cursive" font-size="54" fill="#f0ede8" x="250" y="192">Scholarly Library</text>
+</svg>

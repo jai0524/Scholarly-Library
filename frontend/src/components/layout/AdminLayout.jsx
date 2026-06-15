@@ -165,7 +165,7 @@ export default function AdminLayout({ children }) {
 
       {/* ── Main content ── */}
       <div
-        className={`min-h-screen bg-surface text-on-surface transition-[margin-left] duration-300 ease-in-out pb-20 md:pb-0 ${sidebarOpen ? 'md:ml-72' : 'md:ml-0'}`}
+        className={`min-h-screen bg-surface text-on-surface transition-[margin-left] duration-300 ease-in-out pb-20 md:pb-0 md:pt-[88px] ${sidebarOpen ? 'md:ml-72' : 'md:ml-0'}`}
       >
         {children}
       </div>

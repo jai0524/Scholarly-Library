@@ -21,7 +21,9 @@ connectDB().catch((err) => {
 })
 
 // Middleware
-const allowedOrigins = [process.env.CLIENT_URL, 'http://localhost:5173', 'http://localhost:3000'].filter(Boolean)
+const allowedOrigins = [process.env.CLIENT_URL, 'http://localhost:5173', 'http://localhost:3000']
+  .filter(Boolean)
+  .map(o => o.replace(/\/$/, '')) // strip any accidental trailing slash
 app.use(cors({
   origin: (origin, cb) => (!origin || allowedOrigins.includes(origin) ? cb(null, true) : cb(new Error('Not allowed by CORS'))),
   credentials: true,

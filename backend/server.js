@@ -42,6 +42,9 @@ app.get('/api/health', (_, res) => res.json({ status: 'ok' }))
 
 // Global error handler
 app.use((err, _req, res, _next) => {
+  if (err.name === 'CastError' && err.kind === 'ObjectId') {
+    return res.status(400).json({ message: 'Invalid ID format' })
+  }
   console.error(err.stack)
   res.status(err.status ?? 500).json({ message: err.message ?? 'Internal server error' })
 })

@@ -123,7 +123,7 @@ export default function DashboardPage() {
         <div className="pointer-events-none absolute -top-20 -right-20 w-80 h-80 rounded-full bg-secondary-container opacity-30 dark:opacity-10 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-10 left-0 w-56 h-56 rounded-full bg-primary-container opacity-20 dark:opacity-10 blur-3xl" />
 
-        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 md:px-8 pt-10 pb-12 text-center">
+        <div className="relative max-w-3xl mx-auto mt-14 px-4 sm:px-6 md:px-8 pt-10 pb-12 text-center">
           {/* Greeting */}
           <p className="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-widest mb-3">
             Welcome back

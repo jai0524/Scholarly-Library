@@ -1,10 +1,12 @@
 ﻿import { useId, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../contexts/AuthContext'
 import { api } from '../../services/api'
 import { navBtn, P } from '../../routes/appPaths'
 
 export default function SignupPage() {
   const navigate = useNavigate()
+  const { login } = useAuth()
   const formId = useId()
 
   const [name, setName] = useState('')
@@ -15,9 +17,6 @@ export default function SignupPage() {
   const [showConfirm, setShowConfirm] = useState(false)
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(null) // { email, devToken? }
-  const [resendLoading, setResendLoading] = useState(false)
-  const [resendMsg, setResendMsg] = useState(null)
 
   const handleSignup = async () => {
     setError(null)
@@ -30,79 +29,13 @@ export default function SignupPage() {
     setLoading(true)
     try {
       const data = await api.post('/auth/signup', { name: name.trim(), email: trimmedEmail, password })
-      setSuccess({ email: trimmedEmail, devToken: data.devToken || null })
+      login({ id: data.user._id, email: data.user.email, role: data.user.role, token: data.token })
+      navigate(data.user.role === 'admin' || data.user.role === 'superadmin' ? P.adminAnalytics : P.userDashboard, { replace: true })
     } catch (err) {
       setError(err.message || 'Signup failed. Please try again.')
     } finally {
       setLoading(false)
     }
-  }
-
-  const handleResend = async () => {
-    setResendMsg(null)
-    setResendLoading(true)
-    try {
-      const data = await api.post('/auth/resend-verify', { email: success.email })
-      setResendMsg(data.message)
-      if (data.devToken) setSuccess((s) => ({ ...s, devToken: data.devToken }))
-    } catch (err) {
-      setResendMsg(err.message || 'Could not resend. Please try again.')
-    } finally {
-      setResendLoading(false)
-    }
-  }
-
-  if (success) {
-    return (
-      <div className="bg-surface text-on-surface font-body-md min-h-screen flex items-center justify-center p-gutter relative overflow-hidden">
-        <div className="absolute inset-0 z-0 bg-surface-container-low opacity-50" />
-        <div className="absolute -top-24 -left-24 w-96 h-96 bg-secondary-container rounded-full blur-3xl opacity-20" />
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-primary-container rounded-full blur-3xl opacity-10" />
-        <main className="relative z-10 w-full max-w-md bg-surface-container-lowest shadow-xl rounded-xl p-margin-desktop text-center space-y-6">
-          <div className="flex justify-center">
-            <span className="material-symbols-outlined text-secondary text-[64px]">mark_email_unread</span>
-          </div>
-          <div>
-            <h1 className="font-headline-md text-headline-md text-on-surface mb-2">Check your email</h1>
-            <p className="font-body-md text-body-md text-on-surface-variant">
-              We sent a verification link to <strong className="text-secondary">{success.email}</strong>. Click the link to activate your account.
-            </p>
-          </div>
-          {success.devToken && (
-            <div className="rounded-lg bg-surface-container border border-outline-variant/40 p-4 text-left space-y-2">
-              <p className="font-label-sm text-label-sm text-outline uppercase tracking-widest">Dev mode — no SMTP configured</p>
-              <button
-                type="button"
-                className={`${navBtn} w-full py-3 bg-secondary text-on-secondary font-title-sm text-title-sm rounded-lg hover:opacity-90 transition-all`}
-                onClick={() => navigate(`${P.verifyEmail}?token=${success.devToken}`)}
-              >
-                Click to verify (dev shortcut)
-              </button>
-            </div>
-          )}
-          {resendMsg && (
-            <p className="font-label-sm text-label-sm text-on-surface-variant">{resendMsg}</p>
-          )}
-          <div className="flex flex-col gap-3">
-            <button
-              type="button"
-              disabled={resendLoading}
-              className={`${navBtn} py-3 border border-outline-variant rounded-lg font-body-md text-on-surface-variant hover:text-on-surface hover:border-outline transition-all disabled:opacity-60`}
-              onClick={handleResend}
-            >
-              {resendLoading ? 'Sending…' : 'Resend verification email'}
-            </button>
-            <button
-              type="button"
-              className={`${navBtn} font-label-sm text-label-sm text-secondary hover:underline`}
-              onClick={() => navigate(P.login)}
-            >
-              Back to login
-            </button>
-          </div>
-        </main>
-      </div>
-    )
   }
 
   return (

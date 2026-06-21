@@ -39,10 +39,12 @@ export default function AdminPageHeader({
     <header
       className={`md:sticky md:top-[88px] ${zIndex} w-full`}
       style={{
-        background: 'linear-gradient(to right, rgba(233,193,118,0.07) 0%, #0a0914 30%, #0d0c1a 100%)',
+        background: 'linear-gradient(to right, rgba(233,193,118,0.08) 0%, rgba(10,9,20,0.78) 30%, rgba(13,12,26,0.78) 100%)',
         borderLeft: '3px solid #e9c176',
         borderBottom: '1px solid rgba(233,193,118,0.12)',
         boxShadow: '0 2px 20px rgba(0,0,0,0.45)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)'
       }}
     >
       <div className="flex items-center justify-between px-gutter py-3">

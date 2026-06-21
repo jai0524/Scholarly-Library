@@ -28,7 +28,7 @@ const LIBRARIAN_ITEMS = [
   { to: P.adminAnalytics,    label: 'Analytics',   end: true },
   { to: P.adminBorrows,      label: 'Item Request',     end: true },
   { to: P.adminUsers,        label: 'Users',     end: true },
-  { to: P.adminMaterials,    label: 'All Items', end: true },
+  { to: P.adminMaterials,    label: 'Items List', end: true },
   { to: P.adminMaterialsAdd, label: 'Add Items',   end: true },
 ]
 

@@ -12,7 +12,6 @@ import AdminLayout from './components/layout/AdminLayout'
 
 const LoginPage              = lazy(() => import('./pages/auth/LoginPage'))
 const SignupPage             = lazy(() => import('./pages/auth/SignupPage'))
-const VerifyEmailPage        = lazy(() => import('./pages/auth/VerifyEmailPage'))
 const LandingPage            = lazy(() => import('./pages/LandingPage'))
 const DashboardPage          = lazy(() => import('./pages/user/DashboardPage'))
 const ActivityPage           = lazy(() => import('./pages/user/ActivityPage'))
@@ -49,7 +48,7 @@ function ScrollToTop() {
 
 function AppNav() {
   const { pathname } = useLocation()
-  if (['/','','/login','/signup','/verify-email'].includes(pathname)) return null
+  if (['/','','/login','/signup'].includes(pathname)) return null
   return (
     <div className="hidden md:block">
       <RouteNav />
@@ -83,7 +82,6 @@ export default function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
-            <Route path="/verify-email" element={<VerifyEmailPage />} />
             <Route
               path="/user/dashboard"
               element={

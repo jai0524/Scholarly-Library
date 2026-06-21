@@ -2,7 +2,6 @@
 export const P = {
   login: '/login',
   signup: '/signup',
-  verifyEmail: '/verify-email',
   userDashboard: '/user/dashboard',
   userActivity: '/user/activity',
   userDashboardFiles: '/user/dashboard-files',

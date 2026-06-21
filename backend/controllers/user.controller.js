@@ -47,7 +47,6 @@ async function create(req, res, next) {
     if (assignedRole === 'superadmin' && req.user.role !== 'superadmin') {
       return res.status(403).json({ message: 'Only a superadmin can assign the superadmin role' })
     }
-    // Admin-created accounts are pre-verified — no email flow needed
     const user = await User.create({ name: name.trim(), email: normalizedEmail, password, role: assignedRole, isEmailVerified: true })
     res.status(201).json(user)
   } catch (err) {

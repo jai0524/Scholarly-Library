@@ -8,8 +8,6 @@ const {
   sendOtp,
   changePassword,
   deactivateAccount,
-  verifyEmail,
-  resendVerify,
 } = require('../controllers/auth.controller')
 const { protect } = require('../middleware/auth')
 
@@ -26,8 +24,6 @@ const loginRules = [
 
 router.post('/signup',        signupRules, signup)
 router.post('/login',         loginRules,  login)
-router.get('/verify-email',               verifyEmail)
-router.post('/resend-verify',             resendVerify)
 router.get('/me',          protect,     me)
 router.patch('/profile',   protect,     updateProfile)
 router.post('/otp',        protect,     sendOtp)

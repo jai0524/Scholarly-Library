@@ -2,6 +2,8 @@ const router = require('express').Router()
 const { body } = require('express-validator')
 const {
   signup,
+  verifySignupOtp,
+  resendSignupOtp,
   login,
   me,
   updateProfile,
@@ -22,8 +24,10 @@ const loginRules = [
   body('password').notEmpty().withMessage('Password is required'),
 ]
 
-router.post('/signup',        signupRules, signup)
-router.post('/login',         loginRules,  login)
+router.post('/signup',             signupRules, signup)
+router.post('/verify-signup-otp',             verifySignupOtp)
+router.post('/resend-signup-otp',             resendSignupOtp)
+router.post('/login',              loginRules,  login)
 router.get('/me',          protect,     me)
 router.patch('/profile',   protect,     updateProfile)
 router.post('/otp',        protect,     sendOtp)

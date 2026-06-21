@@ -1,4 +1,4 @@
-﻿import { useId, useState } from 'react'
+import { useId, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { api } from '../../services/api'
@@ -9,14 +9,23 @@ export default function SignupPage() {
   const { login } = useAuth()
   const formId = useId()
 
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  // signup form
+  const [name, setName]                   = useState('')
+  const [email, setEmail]                 = useState('')
+  const [password, setPassword]           = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirm, setShowConfirm] = useState(false)
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword]   = useState(false)
+  const [showConfirm, setShowConfirm]     = useState(false)
+  const [error, setError]                 = useState(null)
+  const [loading, setLoading]             = useState(false)
+
+  // otp screen
+  const [otpSent, setOtpSent]         = useState(null) // { email }
+  const [otp, setOtp]                 = useState('')
+  const [verifyLoading, setVerifyLoading] = useState(false)
+  const [verifyError, setVerifyError] = useState(null)
+  const [resendLoading, setResendLoading] = useState(false)
+  const [resendMsg, setResendMsg]     = useState(null)
 
   const handleSignup = async () => {
     setError(null)
@@ -28,9 +37,9 @@ export default function SignupPage() {
     if (password !== confirmPassword) { setError('Passwords do not match.'); return }
     setLoading(true)
     try {
-      const data = await api.post('/auth/signup', { name: name.trim(), email: trimmedEmail, password })
-      login({ id: data.user._id, email: data.user.email, role: data.user.role, token: data.token })
-      navigate(data.user.role === 'admin' || data.user.role === 'superadmin' ? P.adminAnalytics : P.userDashboard, { replace: true })
+      await api.post('/auth/signup', { name: name.trim(), email: trimmedEmail, password })
+      setOtpSent({ email: trimmedEmail })
+      setOtp('')
     } catch (err) {
       setError(err.message || 'Signup failed. Please try again.')
     } finally {
@@ -38,6 +47,120 @@ export default function SignupPage() {
     }
   }
 
+  const handleVerify = async () => {
+    setVerifyError(null)
+    if (otp.length !== 6) { setVerifyError('Please enter the 6-digit code.'); return }
+    setVerifyLoading(true)
+    try {
+      const data = await api.post('/auth/verify-signup-otp', { email: otpSent.email, otp })
+      login({ id: data.user._id, email: data.user.email, role: data.user.role, token: data.token })
+      navigate(data.user.role === 'admin' || data.user.role === 'superadmin' ? P.adminAnalytics : P.userDashboard, { replace: true })
+    } catch (err) {
+      setVerifyError(err.message || 'Verification failed. Please try again.')
+    } finally {
+      setVerifyLoading(false)
+    }
+  }
+
+  const handleResend = async () => {
+    setResendMsg(null)
+    setResendLoading(true)
+    try {
+      const data = await api.post('/auth/resend-signup-otp', { email: otpSent.email })
+      setResendMsg(data.message)
+      setOtp('')
+    } catch (err) {
+      setResendMsg(err.message || 'Could not resend. Please try again.')
+    } finally {
+      setResendLoading(false)
+    }
+  }
+
+  /* ── OTP verification screen ─────────────────────── */
+  if (otpSent) {
+    return (
+      <div className="bg-surface text-on-surface font-body-md min-h-screen flex items-center justify-center p-gutter relative overflow-hidden">
+        <div className="absolute inset-0 z-0 bg-surface-container-low opacity-50" />
+        <div className="absolute -top-24 -left-24 w-96 h-96 bg-secondary-container rounded-full blur-3xl opacity-20" />
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-primary-container rounded-full blur-3xl opacity-10" />
+
+        <main className="relative z-10 w-full max-w-sm bg-surface-container-lowest shadow-xl rounded-xl p-8 text-center space-y-6">
+          <div className="flex justify-center">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: 'rgba(233,193,118,0.12)', border: '1px solid rgba(233,193,118,0.25)' }}>
+              <span className="material-symbols-outlined text-[36px]" style={{ color: '#e9c176' }}>mark_email_read</span>
+            </div>
+          </div>
+
+          <div>
+            <h1 className="font-headline-md text-headline-md text-on-surface mb-2">Verify your email</h1>
+            <p className="font-body-md text-body-md text-on-surface-variant">
+              We sent a 6-digit code to{' '}
+              <strong className="text-on-surface">{otpSent.email}</strong>
+            </p>
+          </div>
+
+          {verifyError && (
+            <p className="rounded-lg bg-error-container px-3 py-2 font-label-sm text-on-error-container" role="alert">
+              {verifyError}
+            </p>
+          )}
+
+          {/* OTP input */}
+          <div className="space-y-2">
+            <label className="font-label-sm text-label-sm text-on-surface-variant block text-left">
+              Verification Code
+            </label>
+            <input
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              placeholder="000000"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              onKeyDown={(e) => e.key === 'Enter' && handleVerify()}
+              autoFocus
+              className="w-full py-4 bg-surface-container border border-outline-variant rounded-lg font-body-md focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all text-center text-2xl tracking-[0.6em]"
+            />
+          </div>
+
+          <button
+            type="button"
+            disabled={verifyLoading || otp.length !== 6}
+            onClick={handleVerify}
+            className={`${navBtn} w-full py-4 bg-secondary text-on-secondary font-title-md text-title-md rounded-lg shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex justify-center items-center gap-2 disabled:opacity-60`}
+          >
+            <span>{verifyLoading ? 'Verifying…' : 'Verify & Continue'}</span>
+            {!verifyLoading && <span className="material-symbols-outlined">arrow_forward</span>}
+          </button>
+
+          <div className="space-y-2 pt-1">
+            {resendMsg && (
+              <p className="font-label-sm text-label-sm text-on-surface-variant">{resendMsg}</p>
+            )}
+            <button
+              type="button"
+              disabled={resendLoading}
+              onClick={handleResend}
+              className={`${navBtn} font-label-sm text-label-sm text-secondary hover:underline disabled:opacity-60`}
+            >
+              {resendLoading ? 'Sending…' : "Didn't receive it? Resend code"}
+            </button>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => { setOtpSent(null); setVerifyError(null); setOtp('') }}
+            className={`${navBtn} font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface flex items-center gap-1 mx-auto`}
+          >
+            <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+            Wrong email? Go back
+          </button>
+        </main>
+      </div>
+    )
+  }
+
+  /* ── Signup form ─────────────────────────────────── */
   return (
     <div className="bg-surface text-on-surface font-body-md min-h-screen flex items-center justify-center p-gutter relative overflow-hidden">
       <div className="absolute inset-0 z-0 bg-surface-container-low opacity-50" />
@@ -80,10 +203,7 @@ export default function SignupPage() {
             </p>
           )}
 
-          <form
-            className="space-y-4"
-            onSubmit={(e) => { e.preventDefault(); handleSignup() }}
-          >
+          <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleSignup() }}>
             {/* Full Name */}
             <div className="space-y-1">
               <label className="font-label-sm text-label-sm text-on-surface-variant block" htmlFor={`${formId}-name`}>
@@ -179,11 +299,9 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className={`${navBtn} w-full py-4 bg-secondary text-on-secondary font-title-md text-title-md rounded-lg shadow-lg 
-              hover:opacity-90 active:scale-[0.98] transition-all 
-              flex justify-center items-center gap-2 disabled:opacity-60` }
+              className={`${navBtn} w-full py-4 bg-secondary text-on-secondary font-title-md text-title-md rounded-lg shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex justify-center items-center gap-2 disabled:opacity-60`}
             >
-              <span>{loading ? 'Creating…' : 'Create Account'}</span>
+              <span>{loading ? 'Sending code…' : 'Create Account'}</span>
               <span className="material-symbols-outlined">arrow_forward</span>
             </button>
           </form>

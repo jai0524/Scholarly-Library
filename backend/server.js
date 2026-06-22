@@ -1,5 +1,11 @@
 require('dotenv').config()
 require('dns').setDefaultResultOrder('ipv4first')
+
+// Startup diagnostics — visible in Render logs
+console.log('[ENV] RESEND_API_KEY  :', !!process.env.RESEND_API_KEY)
+console.log('[ENV] RESEND_API_URL  :', !!process.env.RESEND_API_URL)
+console.log('[ENV] NODE_ENV        :', process.env.NODE_ENV)
+
 const express     = require('express')
 const cors        = require('cors')
 const compression = require('compression')

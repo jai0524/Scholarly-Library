@@ -1,11 +1,5 @@
 require('dotenv').config()
 require('dns').setDefaultResultOrder('ipv4first')
-
-// Startup diagnostics — visible in Render logs
-console.log('[ENV] RESEND_API_KEY  :', !!process.env.RESEND_API_KEY)
-console.log('[ENV] RESEND_API_URL  :', !!process.env.RESEND_API_URL)
-console.log('[ENV] NODE_ENV        :', process.env.NODE_ENV)
-
 const express     = require('express')
 const cors        = require('cors')
 const compression = require('compression')
@@ -74,25 +68,12 @@ async function start() {
     process.exit(1)
   }
 
-  if (!process.env.CLIENT_URL) {
-    console.warn('WARNING: CLIENT_URL not set — CORS allows localhost only')
-  }
-
   // Connect to DB first, then open the port so no request hits a route before DB is ready
   await connectDB()
 
   const PORT = process.env.PORT || 5000
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
-
-    // Keep Render free tier alive — ping self every 14 minutes to prevent spin-down
-    if (process.env.SERVER_URL) {
-      setInterval(() => {
-        fetch(`${process.env.SERVER_URL}/api/health`)
-          .then(() => console.log('Keep-alive ping sent'))
-          .catch(() => {})
-      }, 14 * 60 * 1000)
-    }
   })
 }
 

@@ -1,5 +1,4 @@
 const router = require('express').Router()
-const path = require('path')
 const { protect, requireRole } = require('../middleware/auth')
 const upload = require('../middleware/upload')
 

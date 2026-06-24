@@ -15,11 +15,9 @@ const userSchema = new mongoose.Schema(
     bio:            { type: String,  default: '' },
     suspended:      { type: Boolean, default: false },
     isDeactivated:  { type: Boolean, default: false },
-    otpCode:           { type: String,  default: null },
-    otpExpiry:         { type: Date,    default: null },
-    isEmailVerified:   { type: Boolean, default: false },
-    emailVerifyToken:  { type: String,  default: null },
-    emailVerifyExpiry: { type: Date,    default: null },
+    otpCode:         { type: String,  default: null },
+    otpExpiry:       { type: Date,    default: null },
+    isEmailVerified: { type: Boolean, default: false },
   },
   { timestamps: true }
 )

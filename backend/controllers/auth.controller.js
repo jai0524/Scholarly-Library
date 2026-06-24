@@ -70,6 +70,9 @@ async function verifySignupOtp(req, res, next) {
     if (!email || !otp) {
       return res.status(400).json({ message: 'Email and verification code are required.' })
     }
+    if (!/^\d{6}$/.test(String(otp))) {
+      return res.status(400).json({ message: 'Verification code must be 6 digits.' })
+    }
 
     const user = await User.findOne({ email: email.toLowerCase(), isEmailVerified: false })
     if (!user) {

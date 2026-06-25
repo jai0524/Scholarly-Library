@@ -201,7 +201,7 @@ export default function AdminBorrowsPage() {
             <input
               className="w-full pl-12 pr-10 py-3 bg-surface-container-lowest border border-outline-variant focus:border-secondary focus:ring-0 rounded-xl font-body-md text-body-md transition-all outline-none"
               placeholder="Search by member name, email, or material title..."
-              type="search"
+              type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />

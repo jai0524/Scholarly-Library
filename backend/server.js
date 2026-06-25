@@ -74,6 +74,13 @@ async function start() {
   const PORT = process.env.PORT || 5000
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
+
+    // Keep Render free tier alive — ping self every 14 min to prevent spin-down
+    if (process.env.SERVER_URL) {
+      setInterval(() => {
+        fetch(`${process.env.SERVER_URL}/api/health`).catch(() => {})
+      }, 14 * 60 * 1000)
+    }
   })
 }
 

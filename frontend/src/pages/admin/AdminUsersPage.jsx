@@ -10,6 +10,7 @@ export default function AdminUsersPage() {
   const navigate = useNavigate()
 
   const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
   const [sortNewest, setSortNewest] = useState(true)
   const [userListPage, setUserListPage] = useState(1)
@@ -18,13 +19,20 @@ export default function AdminUsersPage() {
   const [deleteLoading, setDeleteLoading] = useState(false)
   const [suspendTarget, setSuspendTarget] = useState(null)
   const [suspendLoading, setSuspendLoading] = useState(false)
-  const [resetTarget, setResetTarget]   = useState(null)   // { _id, name, email, role }
+  const [resetTarget, setResetTarget]   = useState(null)
   const [resetPwd, setResetPwd]         = useState('')
   const [resetLoading, setResetLoading] = useState(false)
-  const [resetDone, setResetDone]       = useState(false)  // show success + password
+  const [resetDone, setResetDone]       = useState(false)
 
   const { role: myRole, session } = useAuth()
-  const { users, total, loading, refetch } = useUsers({ page: userListPage, limit: 20 })
+  const { users, total, loading, refetch } = useUsers({ page: userListPage, limit: 20, q: debouncedSearch })
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search), 400)
+    return () => clearTimeout(t)
+  }, [search])
+
+  useEffect(() => { setUserListPage(1) }, [debouncedSearch])
 
   useEffect(() => {
     if (!toastMsg) return
@@ -34,8 +42,6 @@ export default function AdminUsersPage() {
 
   const filteredUsers = users
     .filter((u) => {
-      const q = search.toLowerCase()
-      if (q && !u.name.toLowerCase().includes(q) && !u.email.toLowerCase().includes(q)) return false
       if (roleFilter === 'students' && u.role !== 'user') return false
       if (roleFilter === 'librarians' && u.role !== 'admin' && u.role !== 'superadmin') return false
       return true

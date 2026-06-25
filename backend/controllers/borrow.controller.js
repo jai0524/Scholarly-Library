@@ -1,6 +1,7 @@
 const BorrowRequest = require('../models/BorrowRequest')
 const Material = require('../models/Material')
 const Activity = require('../models/Activity')
+const User = require('../models/User')
 
 // POST /api/borrow  — user requests a material
 async function requestBorrow(req, res, next) {
@@ -162,10 +163,26 @@ async function myRequests(req, res, next) {
 // GET /api/borrow  — admin: all requests with full detail
 async function allRequests(req, res, next) {
   try {
-    const { status, page = 1, limit = 20, materialId } = req.query
+    const { status, page = 1, limit = 20, materialId, q } = req.query
     const filter = {}
     if (status) filter.status = status
     if (materialId) filter.material = materialId
+    if (q) {
+      const regex = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
+      const [matchingUsers, matchingMaterials] = await Promise.all([
+        User.find({ $or: [{ name: regex }, { email: regex }] }).select('_id'),
+        Material.find({ title: regex }).select('_id'),
+      ])
+      const userIds = matchingUsers.map((u) => u._id)
+      const matIds = matchingMaterials.map((m) => m._id)
+      if (userIds.length === 0 && matIds.length === 0) {
+        return res.json({ requests: [], total: 0, page: Number(page), pages: 0 })
+      }
+      filter.$or = [
+        ...(userIds.length ? [{ user: { $in: userIds } }] : []),
+        ...(matIds.length ? [{ material: { $in: matIds } }] : []),
+      ]
+    }
     const [requests, total] = await Promise.all([
       BorrowRequest.find(filter)
         .populate('user', 'name email')

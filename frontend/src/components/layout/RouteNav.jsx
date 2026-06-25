@@ -18,18 +18,18 @@ const linkClass = (isActive) =>
   ].join(' ')
 
 const PATRON_ITEMS = [
-  { to: P.userDashboard, label: 'Home',    end: true },
-  { to: P.userCatalog,   label: 'Study Items',  end: true },
-  { to: P.userActivity,  label: 'History', end: true },
-  { to: P.userProfile,   label: 'Account', end: true },
+  { to: P.userDashboard, label: 'Dashboard',    end: true },
+  { to: P.userCatalog,   label: 'Library',  end: true },
+  { to: P.userActivity,  label: 'Activity', end: true },
+  { to: P.userProfile,   label: 'Profile', end: true },
 ]
 
 const LIBRARIAN_ITEMS = [
-  { to: P.adminAnalytics,    label: 'Analytics',   end: true },
-  { to: P.adminBorrows,      label: 'Request',     end: true },
+  { to: P.adminAnalytics,    label: 'Dashboard',   end: true },
+  { to: P.adminBorrows,      label: 'Requests',     end: true },
   { to: P.adminUsers,        label: 'Users',     end: true },
-  { to: P.adminMaterials,    label: 'Items Details', end: true },
-  { to: P.adminMaterialsAdd, label: 'Add Items',   end: true },
+  { to: P.adminMaterials,    label: 'Resources', end: true },
+  { to: P.adminMaterialsAdd, label: 'Add Resource',   end: true },
 ]
 
 function navGroupsForUser(isAuthenticated, role) {

@@ -48,6 +48,8 @@ export default function AdminBorrowsPage() {
   const { role } = useAuth()
   const { addActivity } = useActivity()
   const isSuperAdmin = role === 'superadmin'
+  const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [requests, setRequests] = useState([])
   const [total, setTotal] = useState(0)
@@ -63,6 +65,13 @@ export default function AdminBorrowsPage() {
   const totalPages = Math.max(1, Math.ceil(total / LIMIT))
 
   useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search), 400)
+    return () => clearTimeout(t)
+  }, [search])
+
+  useEffect(() => { setPage(1) }, [debouncedSearch])
+
+  useEffect(() => {
     if (!toastMsg) return
     const t = setTimeout(() => setToastMsg(null), 3000)
     return () => clearTimeout(t)
@@ -73,6 +82,7 @@ export default function AdminBorrowsPage() {
     try {
       const params = new URLSearchParams({ page, limit: LIMIT })
       if (statusFilter !== 'all') params.set('status', statusFilter)
+      if (debouncedSearch) params.set('q', debouncedSearch)
 
       const [data, ...statusCounts] = await Promise.all([
         api.get(`/borrow?${params}`),
@@ -91,7 +101,7 @@ export default function AdminBorrowsPage() {
     } finally {
       setLoading(false)
     }
-  }, [page, statusFilter])
+  }, [page, statusFilter, debouncedSearch])
 
   useEffect(() => { fetchRequests() }, [fetchRequests])
 
@@ -185,6 +195,28 @@ export default function AdminBorrowsPage() {
         />
 
         <div className="max-w-[1280px] mx-auto px-gutter py-8 space-y-6">
+          {/* Search bar */}
+          <div className="relative group">
+            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-secondary transition-colors">search</span>
+            <input
+              className="w-full pl-12 pr-10 py-3 bg-surface-container-lowest border border-outline-variant focus:border-secondary focus:ring-0 rounded-xl font-body-md text-body-md transition-all outline-none"
+              placeholder="Search by member name, email, or material title..."
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch('')}
+                aria-label="Clear search"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full text-outline hover:text-on-surface hover:bg-surface-container-high active:scale-90"
+              >
+                <span className="material-symbols-outlined text-[18px]">close</span>
+              </button>
+            )}
+          </div>
+
           {/* Status filter tabs */}
           <div className="flex gap-2 flex-wrap">
             {STATUS_FILTERS.map(({ key, label }) => {

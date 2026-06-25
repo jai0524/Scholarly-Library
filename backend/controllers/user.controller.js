@@ -3,8 +3,12 @@ const User = require('../models/User')
 // GET /api/users  (admin+)
 async function getAll(req, res, next) {
   try {
-    const { role, page = 1, limit = 20 } = req.query
+    const { role, page = 1, limit = 20, q } = req.query
     const filter = role ? { role } : {}
+    if (q) {
+      const regex = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
+      filter.$or = [{ name: regex }, { email: regex }]
+    }
     const [users, total] = await Promise.all([
       User.find(filter)
         .select('-password')

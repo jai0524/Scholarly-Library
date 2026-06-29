@@ -38,8 +38,13 @@ function StatusBadge({ status }) {
 }
 
 function fmt(dateStr) {
-  if (!dateStr) return 'â€"'
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  const date = dateStr && dateStr.trim() !== "" ? new Date(dateStr) : new Date();
+
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
 }
 
 export default function AdminBorrowsPage() {

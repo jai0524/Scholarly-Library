@@ -18,7 +18,6 @@ const ActivityPage           = lazy(() => import('./pages/user/ActivityPage'))
 const ProfilePage            = lazy(() => import('./pages/user/ProfilePage'))
 const CatalogPage            = lazy(() => import('./pages/user/CatalogPage'))
 const MaterialDetailPage     = lazy(() => import('./pages/user/MaterialDetailPage'))
-const MaterialViewerPage     = lazy(() => import('./pages/user/MaterialViewerPage'))
 const SaveHistoryPage        = lazy(() => import('./pages/user/SaveHistoryPage'))
 const AdminAnalyticsPage     = lazy(() => import('./pages/admin/AdminAnalyticsPage'))
 const AdminUsersPage         = lazy(() => import('./pages/admin/AdminUsersPage'))
@@ -112,14 +111,6 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <UserRouteWrapper><MaterialDetailPage /></UserRouteWrapper>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/user/materials/:id/view"
-              element={
-                <ProtectedRoute>
-                  <UserRouteWrapper><MaterialViewerPage /></UserRouteWrapper>
                 </ProtectedRoute>
               }
             />

@@ -98,6 +98,27 @@ export default function MaterialDetailPage() {
     }
   }
 
+  const handlePreview = () => {
+    window.open(material.fileUrl, '_blank', 'noopener,noreferrer')
+  }
+
+  const handleDownload = async () => {
+    try {
+      const res = await fetch(material.fileUrl, { mode: 'cors' })
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${material.title || 'resource'}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    } catch {
+      window.open(material.fileUrl, '_blank', 'noopener,noreferrer')
+    }
+  }
+
   const handleToggleSave = () => {
     if (!material) return
     const now = new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
@@ -203,10 +224,6 @@ export default function MaterialDetailPage() {
             ) : null}
 
             <div className="flex flex-wrap gap-3">
-              <button type="button" className="flex items-center gap-2 px-7 py-3 rounded-full font-bold text-body-md transition-all active:scale-95 bg-primary text-on-primary hover:opacity-90" onClick={() => navigate(P.userMaterialView(id))}>
-                <span className="material-symbols-outlined">open_in_full</span>
-                View Material
-              </button>
               <button type="button" className={['flex items-center gap-2 px-7 py-3 rounded-full font-bold text-body-md transition-all active:scale-95 border', saved ? 'bg-secondary-container border-secondary text-on-secondary-container' : 'border-secondary text-secondary hover:bg-secondary-container'].join(' ')} onClick={handleToggleSave}>
                 <span className="material-symbols-outlined" style={{ fontVariationSettings: saved ? "'FILL' 1" : "'FILL' 0" }}>bookmark</span>
                 {saved ? 'Saved to Shelf' : 'Save to Shelf'}
@@ -230,11 +247,25 @@ export default function MaterialDetailPage() {
                   My Save History
                 </button>
               )}
-              {canDownload && material.fileUrl && (
-                <a href={material.fileUrl} download target="_blank" rel="noreferrer" className="flex items-center gap-2 px-7 py-3 rounded-full font-bold text-body-md transition-all active:scale-95 bg-secondary text-on-secondary hover:opacity-90">
-                  <span className="material-symbols-outlined">download</span>
-                  Download
-                </a>
+              {material.fileUrl && (
+                <>
+                  <button
+                    type="button"
+                    className="flex items-center gap-2 px-6 py-3 rounded-full font-bold text-body-md transition-all active:scale-95 bg-primary text-on-primary hover:opacity-90"
+                    onClick={handlePreview}
+                  >
+                    <span className="material-symbols-outlined">open_in_new</span>
+                    Preview
+                  </button>
+                  <button
+                    type="button"
+                    className="flex items-center gap-2 px-6 py-3 rounded-full font-bold text-body-md transition-all active:scale-95 border border-primary text-primary hover:bg-primary/10"
+                    onClick={handleDownload}
+                  >
+                    <span className="material-symbols-outlined">download</span>
+                    Download
+                  </button>
+                </>
               )}
             </div>
 
